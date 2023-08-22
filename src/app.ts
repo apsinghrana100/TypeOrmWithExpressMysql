@@ -2,12 +2,14 @@ import * as express from "express";
 import { myDataSource } from "./entity/app-data-source"
 
 import UserRouter  from "./router/user_router"
+import ProductRouter from "./router/company_product_router"
 
 const app = express();
 app.use(express.json());
 
 // register routes
 app.use("/", UserRouter);
+app.use("/", ProductRouter);
 
 // establish database connection
 myDataSource

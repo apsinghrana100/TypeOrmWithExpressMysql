@@ -1,60 +1,81 @@
-import { Request,Response } from "express";
+import { Request, Response } from "express";
 import { myDataSource } from "../entity/app-data-source";
 import { User } from "../entity/user.entity";
+import { User_Profile } from "../entity/user_profile";
 
+const userRepository = myDataSource.getRepository(User);
+const userProfileRepository = myDataSource.getRepository(User_Profile);
 
-export const fetchData = async function (req: Request, res: Response){
-    const users = await myDataSource.getRepository(User).find();
-    res.json(users);
+export const fetchData = async (req: Request, res: Response) => {
+    try {
+        // const users = await userRepository.find({relations:{profile:true}}); // incase of "lazy".we have to manully told to the..we have relationship
+        const users = await userRepository.find(); // incase of "eger" we  dont need to mention/told we have relationship.they automaticlly show all field/
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ msg: "Something went wrong" });
+    }
 };
 
+export const fetchDataById = async (req: Request, res: Response) => {
+    try {
+        const { user_id } = req.params;
+        const user = await userRepository.findOneBy({ id: parseInt(user_id) });
+        if (user) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({ msg: "User not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ msg: "Something went wrong" });
+    }
+};
 
-export const fetchDataById = (async(req:Request,res:Response)=>{
+export const addUserData = async (req: Request, res: Response) => {
+    try {
+        const { firstName, lastName, age, gender } = req.body;
+        const userProfileData = await userProfileRepository.create({
+            age,
+            gender,
+        });
+        const userProfile = await userProfileRepository.save(userProfileData);
 
-    const {user_id} = req.params;
-    const users = await myDataSource.getRepository(User).findBy({id:parseInt(user_id)});
-    res.json(users);
-});
-
-export const addUserData = (async function(req:Request,res:Response){
-    const {firstName,lastName} = req.body
-         const user = await myDataSource.getRepository(User).create({
+        const user = await userRepository.create({
             firstName,
-            lastName
-         });
-            const output = await myDataSource.getRepository(User).save(user);
-            
-            res.status(200).json({msg:"data added successfully"});
-            
-        
-});
+            lastName,
+            profile: userProfile,
+        });
 
-export const updateById =async (req:Request,res:Response) => {
-    try {
+        const output = await userRepository.save(user);
 
-
-        const { user_id} =  req.params;
-        const { firstName} = req.body;
-        const user = await myDataSource.getRepository(User).findOneBy({id:parseInt(user_id)});
-        user.firstName = firstName;
-
-        await myDataSource.getRepository(User).save(user);
-        res.status(200).json({msg:"update successfully"});
+        res.status(200).json({ msg: "Data added successfully", output });
     } catch (error) {
-        res.status(400).json({msg:"something went wrong"});
+        res.status(400).json({ msg: "Something went wrong", error });
     }
-            
-}
+};
 
-export const deleteData = (async (req:Request,res:Response) => {
+export const updateById = async (req: Request, res: Response) => {
     try {
-        const { user_id} =  req.params;
-        const user = await myDataSource.getRepository(User).delete({id:parseInt(user_id)});
-        res.status(200).json({msg:"delete Successfully"});
+        const { user_id } = req.params;
+        const { firstName } = req.body;
+        const user = await userRepository.findOneBy({ id: parseInt(user_id) });
+        if (user) {
+            user.firstName = firstName;
+            await userRepository.save(user);
+            res.status(200).json({ msg: "Update successful" });
+        } else {
+            res.status(404).json({ msg: "User not found" });
+        }
     } catch (error) {
-            
-        res.status(400).json({msg:"something went wrong in Delete"})
+        res.status(400).json({ msg: "Something went wrong" });
     }
-    
-    
-});
+};
+
+export const deleteData = async (req: Request, res: Response) => {
+    try {
+        const { user_id } = req.params;
+        await userRepository.delete({ id: parseInt(user_id) });
+        res.status(200).json({ msg: "Delete successful" });
+    } catch (error) {
+        res.status(400).json({ msg: "Something went wrong in Delete" });
+    }
+};
