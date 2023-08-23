@@ -3,15 +3,48 @@ import { myDataSource } from "./entity/app-data-source"
 
 import UserRouter  from "./router/user_router"
 import ProductRouter from "./router/company_product_router"
+import * as cors from "cors"
+
+ import ss from "./router/user_router"
+
+ import * as swaggerUi from "swagger-ui-express"
+//  const swaggerUi = require("swagger-ui-express");
+ import * as swaggerJsDoc from "swagger-jsdoc"
+//  const  swaggerJsDoc = require("swagger-jsdoc"); 
 
 const app = express();
+
+
+const options = {
+    definition: {
+		openapi: "3.0.0",
+		info: {
+			title: "Library API",
+			version: "1.0.0",
+			description: "A simple Express Library API",
+		},
+		servers: [
+			{
+				url: "http://localhost:8000",
+			},
+		],
+	},
+	apis: [],
+}
+
+const specs = swaggerJsDoc(options);
+
+app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(specs))
+
 app.use(express.json());
+app.use(cors());
 
 // register routes
 app.use("/", UserRouter);
 app.use("/", ProductRouter);
 
 // establish database connection
+
 myDataSource
     .initialize()
     .then(() => {
