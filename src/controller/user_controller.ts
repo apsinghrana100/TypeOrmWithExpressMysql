@@ -6,6 +6,7 @@ import { User_Profile } from "../entity/user_profile";
 const userRepository = myDataSource.getRepository(User);
 const userProfileRepository = myDataSource.getRepository(User_Profile);
 
+
 export const fetchData = async (req: Request, res: Response) => {
     try {
         // const users = await userRepository.find({relations:{profile:true}}); // incase of "lazy".we have to manully told to the..we have relationship
@@ -46,8 +47,14 @@ export const addUserData = async (req: Request, res: Response) => {
         });
 
         const output = await userRepository.save(user);
+        const apiResponse = {
+            statusCode: "200",
+            message: "Successful operation",
+            data: output
+        };
 
-        res.status(200).json({ msg: "Data added successfully", output });
+        // res.status(200).json({ msg: "Data added successfully", output });
+        res.status(200).json(apiResponse);
     } catch (error) {
         res.status(400).json({ msg: "Something went wrong", error });
     }

@@ -5,6 +5,12 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "emitDecoratorMetadata": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "baseUrl": "./src", // Your source code root directory
+        "paths": {
+          "@router/*": ["router/*"]
+        }
     }
 }

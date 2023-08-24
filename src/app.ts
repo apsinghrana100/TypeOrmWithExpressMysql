@@ -1,47 +1,24 @@
-import * as express from "express";
+import express from "express";
 import { myDataSource } from "./entity/app-data-source"
-
 import UserRouter  from "./router/user_router"
 import ProductRouter from "./router/company_product_router"
-import * as cors from "cors"
-
- import ss from "./router/user_router"
-
- import * as swaggerUi from "swagger-ui-express"
-//  const swaggerUi = require("swagger-ui-express");
- import * as swaggerJsDoc from "swagger-jsdoc"
-//  const  swaggerJsDoc = require("swagger-jsdoc"); 
-
+import cors from "cors"
+ import swaggerUi from "swagger-ui-express"
+//  import swaggerJsDoc from "swagger-jsdoc"
+ import User from "./router/user_router"
+ import swaggerSpec from "./swagger/swagger"
+  import swaggerDocument  from "./schemas/user_schema.json";
+ 
 const app = express();
-
-
-const options = {
-    definition: {
-		openapi: "3.0.0",
-		info: {
-			title: "Library API",
-			version: "1.0.0",
-			description: "A simple Express Library API",
-		},
-		servers: [
-			{
-				url: "http://localhost:8000",
-			},
-		],
-	},
-	apis: [],
-}
-
-const specs = swaggerJsDoc(options);
-
-app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(specs))
-
 app.use(express.json());
 app.use(cors());
 
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // register routes
-app.use("/", UserRouter);
-app.use("/", ProductRouter);
+app.use("/api/", UserRouter);
+app.use("/api/", ProductRouter);
+
 
 // establish database connection
 

@@ -1,8 +1,10 @@
-import * as express from "express"
-import { fetchDataById , fetchData, addUserData, updateById, deleteData} from "../controller.js/user_controller";
+import express from "express"
+import { fetchDataById , fetchData, addUserData, updateById, deleteData} from "../controller/user_controller";
 
-
+import { User } from "entity/user.entity";
 const router = express.Router();
+
+
 
 /**
  * @swagger
@@ -29,6 +31,29 @@ const router = express.Router();
  *         author: Alexander K. Dewdney
  */
 
+ /**
+  * @swagger
+  * tags:
+  *   name: Books
+  *   description: The books managing API
+  */
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Returns the list of all the books
+ *     tags: [Books]
+ *     responses:
+ *       200:
+ *         description: The list of the books
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
 router.get("/users", fetchData); 
 
 router.get("/users/:user_id", fetchDataById );
