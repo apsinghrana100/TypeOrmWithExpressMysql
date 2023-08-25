@@ -153,17 +153,27 @@
                 "lastName": {
                     "type": "string"
                 },
-                "profile_id": {
-                    "type": "object"
+                "profile":{
+                        "type" :"object",
+                        "properties":{
+                            "id":{
+                                "type":"integer"
+                            },
+                            "age":{
+                                "type":"integer"
+                            },
+                            "gender":{
+                                "type":"string"
+                            }
+                        }   
                 }
+                
             }
         },
         "addUser": {
             "type": "object",
             "properties": {
-                "id":{
-                    "type":"integer"  
-                    },  
+                
                 "firstName": {
                     "type": "string"
                 },
@@ -200,12 +210,13 @@
                 } ,
                 "data": {
                     "type": "object",
-                    "$ref": "#/definitions/addUser"  
+                    "$ref": "#/definitions/users" 
+                    
                 }
             }
             
         },
-
+        
         "Task": {
             "type": "object",
             "properties": {
